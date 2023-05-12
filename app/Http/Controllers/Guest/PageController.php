@@ -9,8 +9,12 @@ use App\Models\Train;
 class PageController extends Controller
 {
     public function index(){
+
+        $newDate = date('H:i:s', strtotime(' + 2 hours'));
+
+
         $trains = Train::where('Data_di_partenza','>=', date("Y-m-d"))
-        ->where('Orario_di_partenza','>=',date("H:i:s"))
+        ->where('Orario_di_partenza','>=',$newDate)
         ->OrderBy('Orario_di_partenza')
         ->limit(10)->get();
 
