@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Functions\Helpers;
+use App\Models\Train;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Train;
-use Faker\Generator as Faker;
 
 class TrainsTableSeeder extends Seeder
 {
@@ -14,22 +14,27 @@ class TrainsTableSeeder extends Seeder
      *
      * @return void
      */
-    public function run(Faker $faker)
+    public function run()
     {
-        for ($i=0; $i<500; $i++){
-            $train = new Train();
-            $train->Azienda = $faker->company();
-            $train->Stazione_di_partenza = $faker->city();
-            $train->Stazione_di_arrivo = $faker->city();
-            $train->Data_di_partenza = $faker->dateTimeBetween('-1 week', '+1 week');
-            $train->Data_di_arrivo = $faker->dateTimeBetween('-1 week', '+1 week');
-            $train->Orario_di_partenza = $faker->time();
-            $train->Orario_di_arrivo = $faker->time();
-            $train->Codice_Treno = $faker->lexify('??????????');
-            $train->Numero_Carrozze = $faker->randomDigitNotNull();
-            $train->In_orario = $faker->boolean();
-            $train->Cancellato = $faker->boolean();
-            $train->save();
+        $csvDocument = Helpers::getCsvContent(__DIR__ . '/trains.csv');
+
+        foreach($csvDocument as $index => $value){
+            if($index > 0 ){
+                $train = new Train();
+                $train->Azienda = $value[0];
+                $train->Stazione_di_partenza = $value[1];
+                $train->Stazione_di_arrivo = $value[2];
+                $train->Data_di_partenza = date('Y-m-d',strtotime($value[3]));
+                $train->Data_di_arrivo = date('Y-m-d',strtotime($value[3]));
+                $train->Orario_di_partenza = date('H:i:s',strtotime($value[3]));
+                $train->Orario_di_arrivo = date('H:i:s',strtotime($value[3]));
+                $train->Codice_Treno = $value[5];
+                $train->Numero_Carrozze = $value[6];
+                $train->In_orario = $value[7];
+                $train->Cancellato = $value[8];
+                $train->save();
+            }
         }
+
     }
 }
